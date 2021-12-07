@@ -1,48 +1,17 @@
-let operaciones = [];
-let balance = 0;
-let metaAhorro = 0;
+const valorDeIngresos = async ()=>{
+    let operacionesRegistradas = [];
+    let ingresos =0;
+    let response = await fetch("https://misiontic2022upb.vercel.app/api/personal-finance/operations");
 
-const registrarOperacion = (monto, tipo, categoria, fecha) => {
+    operacionesRegistradas = await response.json();
 
-    monto = parseInt(monto);
+    for (let i=0; i<operacionesRegistradas.length; i++){
+        if(operacionesRegistradas[i] ['tipo']=='ingreso'){
+            ingresos = ingresos + parseInt(operacionesRegistradas[i]['monto']);
 
-    operaciones.push({
-        monto,
-        tipo,
-        categoria,
-        fecha
-    });
-
-    if (tipo == "ingreso") {
-        balance = monto + balance;
-    } else {
-        balance = balance - monto;
+            
+        }
     }
-
-    localStorage.setItem("operaciones", JSON.stringify(operaciones));
-    localStorage.setItem("balance", JSON.stringify(balance));
-
+    return(ingresos);
 }
-
-const registrarMetaAhorro = (meta) => {
-
-    metaAhorro = meta;
-
-    localStorage.setItem("metaAhorro", JSON.stringify(metaAhorro));
-}
-
-const estaMiMetaCumplida = () => {
-
-    balance = parseInt(localStorage.getItem("balance"));
-    metaAhorro = parseInt(localStorage.getItem("metaAhorro"));
-
-    if (metaAhorro < balance) {
-        return "cumple";
-    } else {
-        return "no cumple";
-    }
-}
-
-module.exports.registrarOperacion = registrarOperacion;
-module.exports.registrarMetaAhorro = registrarMetaAhorro;
-module.exports.estaMiMetaCumplida = estaMiMetaCumplida;
+module.exports.valorDeIngresos= valorDeIngresos;
